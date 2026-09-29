@@ -1,0 +1,192 @@
+{
+  "environment": {
+    "python": "3.12.6",
+    "scikit_learn": "1.9.1",
+    "pandas": "3.0.6",
+    "numpy": "2.5.3"
+  },
+  "settings": {
+    "seed": 42,
+    "test_size": 0.2,
+    "n_folds": 5,
+    "uncertain_band": [
+      0.3,
+      0.7
+    ]
+  },
+  "audit": {
+    "raw_lines": 5574,
+    "rows": 5574,
+    "legacy_parser_rows": 5572,
+    "legacy_parser_altered_messages": 53,
+    "unique_messages": 5171,
+    "exact_duplicate_rows": 403,
+    "label_conflicts": 0,
+    "empty_or_whitespace_messages": 0,
+    "spam_rows": 747,
+    "spam_share": 0.134,
+    "spam_share_after_dedupe": 0.1263,
+    "near_duplicate_extra_messages": 38,
+    "near_duplicate_groups": 35,
+    "near_duplicate_label_conflicts": 0,
+    "length_chars_by_class": {
+      "ham": {
+        "n": 4827,
+        "mean": 71.5,
+        "median": 52.0,
+        "min": 2,
+        "max": 910
+      },
+      "spam": {
+        "n": 747,
+        "mean": 138.7,
+        "median": 149.0,
+        "min": 13,
+        "max": 223
+      }
+    }
+  },
+  "comparison": [
+    {
+      "setting": "v1 original (pandas default parser, no dedupe)",
+      "n_rows": 5572,
+      "n_train": 4457,
+      "n_test": 1115,
+      "train_test_overlap": 128,
+      "accuracy": 0.9847533632286996,
+      "spam_precision": 0.9647887323943662,
+      "spam_recall": 0.9194630872483222,
+      "spam_f1": 0.9415807560137457
+    },
+    {
+      "setting": "fixed parser, no dedupe",
+      "n_rows": 5574,
+      "n_train": 4459,
+      "n_test": 1115,
+      "train_test_overlap": 135,
+      "accuracy": 0.9865470852017937,
+      "spam_precision": 0.9652777777777778,
+      "spam_recall": 0.9328859060402684,
+      "spam_f1": 0.9488054607508533
+    },
+    {
+      "setting": "v2 (fixed parser, exact duplicates dropped)",
+      "n_rows": 5171,
+      "n_train": 4136,
+      "n_test": 1035,
+      "train_test_overlap": 0,
+      "accuracy": 0.9835748792270531,
+      "spam_precision": 0.9596774193548387,
+      "spam_recall": 0.9083969465648855,
+      "spam_f1": 0.9333333333333333
+    }
+  ],
+  "v2_holdout": {
+    "n_train": 4136,
+    "n_test": 1035,
+    "train_test_overlap": 0,
+    "near_duplicate_overlap": 13,
+    "baseline_always_ham": {
+      "accuracy": 0.8734299516908213,
+      "per_class": {
+        "ham": {
+          "precision": 0.8734299516908213,
+          "recall": 1.0,
+          "f1": 0.9324394017534812,
+          "support": 904
+        },
+        "spam": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 131
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "ham",
+          "spam"
+        ],
+        "rows_true_cols_pred": [
+          [
+            904,
+            0
+          ],
+          [
+            131,
+            0
+          ]
+        ]
+      }
+    },
+    "model": {
+      "accuracy": 0.9835748792270531,
+      "per_class": {
+        "ham": {
+          "precision": 0.986827661909989,
+          "recall": 0.9944690265486725,
+          "f1": 0.990633608815427,
+          "support": 904
+        },
+        "spam": {
+          "precision": 0.9596774193548387,
+          "recall": 0.9083969465648855,
+          "f1": 0.9333333333333333,
+          "support": 131
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "ham",
+          "spam"
+        ],
+        "rows_true_cols_pred": [
+          [
+            899,
+            5
+          ],
+          [
+            12,
+            119
+          ]
+        ]
+      }
+    }
+  },
+  "v2_cross_validation": {
+    "n_folds": 5,
+    "n_rows": 5171,
+    "std_note": "sample standard deviation (ddof=1) across folds",
+    "accuracy_per_fold": [
+      0.9826086956521739,
+      0.9864603481624759,
+      0.9854932301740812,
+      0.9825918762088974,
+      0.9835589941972921
+    ],
+    "accuracy_mean": 0.9841426288789841,
+    "accuracy_std": 0.0017531657768986423,
+    "spam_f1_per_fold": [
+      0.9291338582677166,
+      0.9457364341085271,
+      0.9411764705882353,
+      0.9291338582677166,
+      0.9343629343629344
+    ],
+    "spam_f1_mean": 0.9359087111190261,
+    "spam_f1_std": 0.007391212976861073
+  },
+  "original_split_seen_vs_unseen": {
+    "n_test": 1115,
+    "n_seen_in_train": 128,
+    "accuracy_seen_in_train": 0.9921875,
+    "n_unseen": 987,
+    "accuracy_unseen": 0.983789260385005
+  },
+  "casebook": {
+    "rows": 26,
+    "misclassified": 17,
+    "uncertain": 15,
+    "misclassified_and_uncertain": 6
+  }
+}
