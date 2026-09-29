@@ -4,7 +4,8 @@
 > while properly learning Git. Later I re-checked my own evaluation and found a problem.
 > This README describes what I found and how I fixed it.
 
-This is a Naive Bayes classifier that sorts SMS messages into spam and ham (ham means a
+This is a Naive Bayes classifier (a simple model that scores each word by how often it
+shows up in spam versus ham) that sorts SMS messages into spam and ham (ham means a
 normal, wanted message). It is trained on the UCI SMS Spam Collection, a public set of
 real text messages that each carry a spam or ham label.
 
@@ -25,12 +26,16 @@ Some terms first:
 - **Accuracy**: the share of test messages the model labels correctly.
 - **Precision** (for spam): of the messages the model calls spam, the share that really are spam.
 - **Recall** (for spam): of the real spam messages, the share the model catches.
-- **F1**: one number that balances precision and recall (their harmonic mean).
+- **F1**: one number that combines precision and recall. It is only high when both are high.
+- **Holdout**: the test set. I set it aside before training and only use it to score the model.
+- **Stratified split**: a split where train and test keep the same spam share.
+- **Seed**: a fixed starting number for the random shuffle, so every run makes the same split.
 - **Baseline**: a model that always says "ham". Most messages are ham, so it already
   scores high on accuracy while catching zero spam. Any real model has to beat it.
 - **Cross-validation**: I split the data into five parts. Each part takes one turn as the
   test set while the model trains on the other four. The spread across the five runs
-  shows how much the score depends on which messages land in the test set.
+  shows how much the score depends on which messages land in the test set. I report it as
+  mean ± standard deviation (a measure of how far the five scores sit from their average).
 - **Train/test overlap**: the number of test messages whose exact text also appears in the
   training data. That should be zero.
 
