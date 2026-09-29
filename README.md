@@ -75,8 +75,8 @@ I did one thing right. I fit the vectorizer (the step that turns text into word 
 and decides which words exist) on the training data only.
 
 But I missed something bigger. The dataset contains exact duplicate messages. Some
-spam campaigns send the same text many times, and some short ham messages ("Ok lar...")
-repeat. I made a random split, so copies of the same message landed on both sides. The
+spam campaigns send the same text many times, and some short ham messages ("Sorry, I'll
+call later") repeat. I made a random split, so copies of the same message landed on both sides. The
 model got tested partly on messages it had already seen in training.
 
 ### How I found it
@@ -99,7 +99,8 @@ file has lines. `results/audit.md` has the counts.
 3. Drop exact duplicates, keeping the first copy, before splitting.
 4. Split 80/20 with stratification (both sets keep the same spam share).
 5. Fit the vectorizer on training data only, as before.
-6. Assert that the train/test overlap is zero, and print it every run.
+6. Assert that the train/test overlap is zero. `spam_classifier.py` prints the count, and
+   every results table shows it.
 
 ### Before and after
 
@@ -125,8 +126,8 @@ every score.**
 ## Near-duplicates: flagged, not removed
 
 Some messages are almost the same, for example the same text with different
-capitalization or punctuation. I count them by lowercasing, trimming whitespace and
-removing punctuation, then checking which messages now match. The counts are in
+capitalization or punctuation. I count them by lowercasing, removing punctuation and
+collapsing extra spaces, then checking which messages now match. The counts are in
 `results/audit.md` and `results/report.md`.
 
 I don't drop these by default. "Almost the same" is a judgment call. Two short replies
