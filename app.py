@@ -1,41 +1,30 @@
 """Gradio demo for the Naive Bayes SMS spam classifier.
 
-Trains on load from the same data/sms.tsv used in spam_classifier.py
-(UCI SMS Spam Collection), using the identical stratified 80/20 split
-and CountVectorizer + MultinomialNB pipeline, then serves a simple
-web UI for live classification.
+Trains on load with the same v2 pipeline as spam_classifier.py: the UCI SMS
+Spam Collection with exact duplicates dropped before the stratified 80/20
+split, and CountVectorizer + MultinomialNB fit on training data only. Then it
+serves a simple web UI for live classification.
 """
 
 import os
 
 import gradio as gr
-import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import MultinomialNB
+
+from common import DATA_PATH, dedupe, fit_model, load_data, overlap_count, split
 
 DATA_URL = "https://raw.githubusercontent.com/Wachalla/sms-spam-classifier/main/data/sms.tsv"
 
 
-def load_data(path=DATA_URL):
-    return pd.read_csv(path, sep="\t", header=None, names=["label", "message"])
+# Use the bundled file when it is there, otherwise fall back to the copy on GitHub.
+df = dedupe(load_data(DATA_PATH if os.path.exists(DATA_PATH) else DATA_URL))
 
+X_train, X_test, y_train, y_test = split(df)
+assert overlap_count(X_train, X_test) == 0, "train and test share messages"
 
-df = load_data()
+vectorizer, model = fit_model(X_train, y_train)
 
-X_train, X_test, y_train, y_test = train_test_split(
-    df["message"], df["label"], test_size=0.2, random_state=42, stratify=df["label"]
-)
-
-vectorizer = CountVectorizer(stop_words="english", lowercase=True)
-X_train_vec = vectorizer.fit_transform(X_train)
-X_test_vec = vectorizer.transform(X_test)
-
-model = MultinomialNB()
-model.fit(X_train_vec, y_train)
-
-test_acc = accuracy_score(y_test, model.predict(X_test_vec))
+test_acc = accuracy_score(y_test, model.predict(vectorizer.transform(X_test)))
 
 
 def classify(message):
@@ -54,9 +43,9 @@ with gr.Blocks(title="SMS Spam Classifier") as demo:
         f"""
         # SMS Spam Classifier
         Naive Bayes classifier trained on the UCI SMS Spam Collection
-        (stratified 80/20 train/test split, bag-of-words features).
+        (exact duplicates dropped, then a stratified 80/20 train/test split, bag-of-words features).
 
-        **Held-out test accuracy: {test_acc:.1%}**
+        **Held-out test accuracy: {test_acc:.1%}** on {len(y_test)} test messages, none of which appear in the training set.
 
         Source: [github.com/Wachalla/sms-spam-classifier](https://github.com/Wachalla/sms-spam-classifier)
         """

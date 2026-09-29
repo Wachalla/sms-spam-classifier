@@ -1,3 +1,5 @@
-gradio>=4.0
-pandas
-scikit-learn
+# Core pipeline, evaluation and tests. Tested with Python 3.12.
+pandas==3.0.6
+scikit-learn==1.9.1
+joblib==1.6.0
+pytest==9.1.1

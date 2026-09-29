@@ -2,3 +2,6 @@ __pycache__/
 venv/
 .env
 .DS_Store
+*.joblib
+.venv/
+.pytest_cache/

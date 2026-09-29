@@ -1,0 +1,3 @@
+# Web demo (app.py) only.
+-r requirements.txt
+gradio==6.28.0

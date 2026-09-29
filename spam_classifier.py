@@ -1,38 +1,33 @@
 """Naive Bayes SMS spam classifier trained on the UCI SMS Spam Collection."""
 
-import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
+import joblib
 from sklearn.metrics import accuracy_score, classification_report
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import MultinomialNB
+
+from common import dedupe, fit_model, load_data, overlap_count, split
 
 
-def load_data(path="data/sms.tsv"):
-    df = pd.read_csv(path, sep="\t", header=None, names=["label", "message"])
-    return df
-
-
-def main():
+def main(save=True):
     df = load_data()
     print(f"Loaded {len(df)} messages ({(df.label == 'spam').sum()} spam)")
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        df["message"], df["label"], test_size=0.2, random_state=42, stratify=df["label"]
-    )
+    # Drop exact duplicates before splitting, so no message can land on both sides.
+    df = dedupe(df)
+    print(f"After dropping exact duplicates: {len(df)} messages")
 
-    # Turn text into word counts: each message becomes a vector of word frequencies
-    vectorizer = CountVectorizer(stop_words="english", lowercase=True)
-    X_train_vec = vectorizer.fit_transform(X_train)
+    X_train, X_test, y_train, y_test = split(df)
+    overlap = overlap_count(X_train, X_test)
+    print(f"Test messages that also appear in train: {overlap}")
+    assert overlap == 0, "train and test share messages"
+
+    # Turn text into word counts. The vocabulary comes from training data only.
+    vectorizer, model = fit_model(X_train, y_train)
     X_test_vec = vectorizer.transform(X_test)
-
-    model = MultinomialNB()
-    model.fit(X_train_vec, y_train)
-
     predictions = model.predict(X_test_vec)
-    train_acc = accuracy_score(y_train, model.predict(X_train_vec))
+
+    train_acc = accuracy_score(y_train, model.predict(vectorizer.transform(X_train)))
     print(f"\nTrain accuracy: {train_acc:.4f}")
     print(f"Test accuracy:  {accuracy_score(y_test, predictions):.4f}")
-    print(classification_report(y_test, predictions))
+    print(classification_report(y_test, predictions, digits=4))
 
     # Try it on new messages
     samples = [
@@ -41,6 +36,11 @@ def main():
     ]
     for msg, pred in zip(samples, model.predict(vectorizer.transform(samples))):
         print(f"[{pred.upper()}] {msg}")
+
+    if save:
+        joblib.dump(model, "model.joblib")
+        joblib.dump(vectorizer, "vectorizer.joblib")
+        print("\nSaved model.joblib and vectorizer.joblib")
 
 
 if __name__ == "__main__":
