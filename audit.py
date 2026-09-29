@@ -74,7 +74,7 @@ def write_audit_md(a):
         f"| Spam rows | {a['spam_rows']} |",
         f"| Spam share (all rows) | {a['spam_share']:.2%} |",
         f"| Spam share (after dropping exact duplicates) | {a['spam_share_after_dedupe']:.2%} |",
-        f"| Near-duplicate groups (match after lowercasing, trimming, removing punctuation) | {a['near_duplicate_groups']} |",
+        f"| Near-duplicate groups (match after lowercasing, removing punctuation, collapsing whitespace) | {a['near_duplicate_groups']} |",
         f"| Extra messages inside those groups (flagged, not dropped) | {a['near_duplicate_extra_messages']} |",
         f"| Near-duplicate groups with conflicting labels | {a['near_duplicate_label_conflicts']} |",
         "",

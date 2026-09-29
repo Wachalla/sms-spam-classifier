@@ -88,7 +88,7 @@ the exact count in the "Train/test overlap" column.
 While auditing the data I also found a second, smaller problem. The file has one message
 per line and no quoting. But pandas reads it by default as if double quotes wrap fields.
 A few messages start with a quote mark. So pandas merged some lines into one row and
-stripped quote marks from others. That is why my old README had two fewer rows than the
+stripped quote marks from others. That is why my old README had fewer rows than the
 file has lines. `results/audit.md` has the counts.
 
 ### The fix
